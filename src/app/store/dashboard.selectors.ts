@@ -18,7 +18,7 @@ export const selectCurrentDashboard = createSelector(
   selectAllDashboards,
   selectCurrentDashboardId,
   (dashboards, currentId) => 
-    currentId ? dashboards.find(d => d.id === currentId) || null : null
+    currentId !== null ? dashboards.find(d => d.id === Number(currentId)) || null : null
 );
 
 export const selectCurrentDashboardCharts = createSelector(
@@ -26,12 +26,12 @@ export const selectCurrentDashboardCharts = createSelector(
   (dashboard) => dashboard?.charts || []
 );
 
-export const selectDashboardById = (id: string) => createSelector(
+export const selectDashboardById = (id: number) => createSelector(
   selectAllDashboards,
   (dashboards) => dashboards.find(d => d.id === id)
 );
 
-export const selectChartById = (dashboardId: string, chartId: string) => createSelector(
+export const selectChartById = (dashboardId: number, chartId: number) => createSelector(
   selectDashboardById(dashboardId),
   (dashboard) => dashboard?.charts.find(c => c.id === chartId)
 );

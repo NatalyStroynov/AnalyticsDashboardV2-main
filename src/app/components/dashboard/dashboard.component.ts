@@ -101,7 +101,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log('Number of charts:', this.currentDashboard.charts.length);
     
     this.currentDashboard.charts.forEach(chart => {
-      const canvas = document.getElementById(chart.id) as HTMLCanvasElement;
+      const canvas = document.getElementById(String(chart.id)) as HTMLCanvasElement;
       console.log(`Looking for canvas with ID: ${chart.id}`);
       
       if (canvas) {
@@ -126,7 +126,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private initializeChartsFromArray(charts: Chart[]): void {
     charts.forEach(chart => {
-      const canvas = document.getElementById(chart.id) as HTMLCanvasElement;
+      const canvas = document.getElementById(String(chart.id)) as HTMLCanvasElement;
       if (canvas) {
         this.renderChartOnCanvas(canvas, chart);
       }
@@ -272,12 +272,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showDashboardDropdown = !this.showDashboardDropdown;
   }
 
-  selectDashboard(dashboardId: string): void {
+  selectDashboard(dashboardId: number): void {
     this.store.dispatch(DashboardActions.setCurrentDashboard({ id: dashboardId }));
     this.showDashboardDropdown = false;
   }
 
-  loadDashboard(dashboardId: string): void {
+  loadDashboard(dashboardId: number): void {
     this.store.dispatch(DashboardActions.setCurrentDashboard({ id: dashboardId }));
   }
 
@@ -304,11 +304,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  editDashboard(dashboardId: string): void {
+  editDashboard(dashboardId: number): void {
     console.log(`Editing dashboard: ${dashboardId}`);
   }
 
-  deleteDashboard(dashboardId: string): void {
+  deleteDashboard(dashboardId: number): void {
     this.store.dispatch(DashboardActions.deleteDashboard({ id: dashboardId }));
   }
 
@@ -347,10 +347,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.activeChartMenu = this.activeChartMenu === chartId ? null : chartId;
   }
 
-  editChart(chartId: string): void {
+  editChart(chartId: number): void {
     this.activeChartMenu = null;
     if (!this.currentDashboard) return;
-    
     const chart = this.currentDashboard.charts.find(c => c.id === chartId);
     if (chart) {
       this.editingChart = { ...chart };
@@ -399,7 +398,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  duplicateChart(chartId: string): void {
+  duplicateChart(chartId: number): void {
     this.activeChartMenu = null;
     if (this.currentDashboard) {
       this.store.dispatch(DashboardActions.duplicateChart({
@@ -409,7 +408,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  deleteChart(chartId: string): void {
+  deleteChart(chartId: number): void {
     this.activeChartMenu = null;
     if (this.currentDashboard) {
       this.store.dispatch(DashboardActions.deleteChart({

@@ -13,9 +13,7 @@ export interface DashboardData {
   id: string;
   name: string;
   description: string;
-  charts: ChartData[];
-  createdAt: Date;
-  updatedAt: Date;
+  charts: ChartData[];  
 }
 
 @Injectable({
@@ -29,62 +27,17 @@ export class DashboardService {
   currentDashboard$ = this.currentDashboardSubject.asObservable();
 
   constructor() {
-    this.initializeDefaultDashboards();
+   
   }
 
-  private initializeDefaultDashboards(): void {
-    const defaultDashboards: DashboardData[] = [
-      {
-        id: 'simulation',
-        name: 'Simulation Field Model',
-        description: 'Medical simulation and field data analysis',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        charts: [
-          {
-            id: 'patient-accrual',
-            title: 'Patient Accrual',
-            type: 'line',
-            data: {
-              labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-              datasets: [{
-                label: 'Patients Enrolled',
-                data: [65, 78, 90, 81, 95, 102],
-                borderColor: '#d4a421',
-                backgroundColor: 'rgba(212, 164, 33, 0.1)',
-                tension: 0.4,
-                fill: true
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { labels: { color: '#ffffff' } },
-                title: { display: true, text: 'Patient Enrollment Over Time', color: '#ffffff' }
-              },
-              scales: {
-                x: { ticks: { color: '#ffffff' }, grid: { color: '#4a4a4a' } },
-                y: { ticks: { color: '#ffffff' }, grid: { color: '#4a4a4a' } }
-              }
-            }
-          }
-        ]
-      }
-    ];
-
-    this.dashboardsSubject.next(defaultDashboards);
-    this.currentDashboardSubject.next(defaultDashboards[0]);
-  }
+  
 
   createDashboard(name: string, description: string): DashboardData {
     const newDashboard: DashboardData = {
       id: `dashboard_${Date.now()}`,
       name: name.trim(),
       description: description.trim(),
-      charts: [],
-      createdAt: new Date(),
-      updatedAt: new Date()
+      charts: []     
     };
 
     const dashboards = [...this.dashboardsSubject.value, newDashboard];
@@ -112,8 +65,7 @@ export class DashboardService {
         id: `chart_${Date.now()}`
       };
       
-      dashboard.charts.push(newChart);
-      dashboard.updatedAt = new Date();
+      dashboard.charts.push(newChart);     
       this.dashboardsSubject.next([...dashboards]);
     }
   }

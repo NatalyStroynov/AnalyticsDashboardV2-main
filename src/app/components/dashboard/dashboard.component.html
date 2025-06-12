@@ -6,7 +6,7 @@
       <!-- Dashboard Selector Dropdown -->
       <div class="dashboard-selector-container" [class.open]="showDashboardDropdown">
         <button class="dashboard-selector" (click)="toggleDashboardDropdown()">
-          {{ currentDashboard.name }}
+          {{ currentDashboard?.name }}
           <span class="material-icons">keyboard_arrow_down</span>
         </button>
         

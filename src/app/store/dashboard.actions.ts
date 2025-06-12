@@ -26,53 +26,53 @@ export const createDashboardSuccess = createAction(
 
 export const updateDashboard = createAction(
   '[Dashboard] Update Dashboard',
-  props<{ id: string; updates: Partial<Dashboard> }>()
+  props<{ id: number; updates: Partial<Dashboard> }>()
 );
 
 export const deleteDashboard = createAction(
   '[Dashboard] Delete Dashboard',
-  props<{ id: string }>()
+  props<{ id: number }>()
 );
 
 export const setCurrentDashboard = createAction(
   '[Dashboard] Set Current Dashboard',
-  props<{ id: string }>()
+  props<{ id: number }>()
 );
 
 // Chart Actions
 export const addChart = createAction(
   '[Chart] Add Chart',
-  props<{ dashboardId: string; chart: Omit<Chart, 'id'> }>()
+  props<{ dashboardId: number; chart: Omit<Chart, 'id'> }>()
 );
 
 export const addChartSuccess = createAction(
   '[Chart] Add Chart Success',
-  props<{ dashboardId: string; chart: Chart }>()
+  props<{ dashboardId: number; chart: Chart }>()
 );
 
 export const updateChart = createAction(
   '[Chart] Update Chart',
-  props<{ dashboardId: string; chartId: string; updates: Partial<Chart> }>()
+  props<{ dashboardId: number; chartId: string; updates: Partial<Chart> }>()
 );
 
 export const updateChartSuccess = createAction(
   '[Chart] Update Chart Success',
-  props<{ dashboardId: string; chart: Chart }>()
+  props<{ dashboardId: number; chart: Chart }>()
 );
 
 export const deleteChart = createAction(
   '[Chart] Delete Chart',
-  props<{ dashboardId: string; chartId: string }>()
+  props<{ dashboardId: number; chartId: number }>()
 );
 
 export const duplicateChart = createAction(
   '[Chart] Duplicate Chart',
-  props<{ dashboardId: string; chartId: string }>()
+  props<{ dashboardId: number; chartId: number }>()
 );
 
 export const duplicateChartSuccess = createAction(
   '[Chart] Duplicate Chart Success',
-  props<{ dashboardId: string; chart: Chart }>()
+  props<{ dashboardId: number; chart: Chart }>()
 );
 
 // Filter Actions

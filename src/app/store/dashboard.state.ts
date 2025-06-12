@@ -1,5 +1,5 @@
 export interface Chart {
-  id: string;
+  id: number;
   title: string;
   type: 'bar' | 'line' | 'pie' | 'doughnut';
   data: any;
@@ -7,12 +7,10 @@ export interface Chart {
 }
 
 export interface Dashboard {
-  id: string;
+  id: number;
   name: string;
   description: string;
   charts: Chart[];
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface FilterClause {
@@ -23,7 +21,7 @@ export interface FilterClause {
 
 export interface DashboardState {
   dashboards: Dashboard[];
-  currentDashboardId: string | null;
+  currentDashboardId: number | null;
   activeFilters: FilterClause[];
   loading: boolean;
   error: string | null;

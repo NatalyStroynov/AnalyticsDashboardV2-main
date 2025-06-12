@@ -37,7 +37,7 @@ export const dashboardReducer = createReducer(
     ...state,
     dashboards: state.dashboards.map(dashboard =>
       dashboard.id === id 
-        ? { ...dashboard, ...updates, updatedAt: new Date() }
+        ? { ...dashboard, ...updates }
         : dashboard
     )
   })),
@@ -65,8 +65,7 @@ export const dashboardReducer = createReducer(
       dashboard.id === dashboardId
         ? {
             ...dashboard,
-            charts: [...dashboard.charts, chart],
-            updatedAt: new Date()
+            charts: [...dashboard.charts, chart]
           }
         : dashboard
     )
@@ -78,8 +77,7 @@ export const dashboardReducer = createReducer(
       dashboard.id === dashboardId
         ? {
             ...dashboard,
-            charts: dashboard.charts.map(c => c.id === chart.id ? chart : c),
-            updatedAt: new Date()
+            charts: dashboard.charts.map(c => c.id === chart.id ? chart : c)
           }
         : dashboard
     )
@@ -91,8 +89,7 @@ export const dashboardReducer = createReducer(
       dashboard.id === dashboardId
         ? {
             ...dashboard,
-            charts: dashboard.charts.filter(c => c.id !== chartId),
-            updatedAt: new Date()
+            charts: dashboard.charts.filter(c => c.id !== chartId)
           }
         : dashboard
     )
@@ -104,8 +101,7 @@ export const dashboardReducer = createReducer(
       dashboard.id === dashboardId
         ? {
             ...dashboard,
-            charts: [...dashboard.charts, chart],
-            updatedAt: new Date()
+            charts: [...dashboard.charts, chart]
           }
         : dashboard
     )

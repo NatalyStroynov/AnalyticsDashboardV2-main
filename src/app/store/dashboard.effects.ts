@@ -12,102 +12,13 @@ export class DashboardEffects {
     this.actions$.pipe(
       ofType(DashboardActions.loadDashboards),
       mergeMap(() => {
-        // Initialize with default dashboards
-        const defaultDashboards: Dashboard[] = [
-          {
-            id: 'simulation',
-            name: 'Simulation Field Model Dashboard',
-            description: 'Medical simulation and field data analysis',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            charts: [
-              {
-                id: 'patient-accrual',
-                title: 'Patient Accrual',
-                type: 'line',
-                data: {
-                  labels: ['May-2023', 'Jun-2023', 'Jul-2023', 'Aug-2023', 'Sep-2023', 'Oct-2023', 'Nov-2023', 'Dec-2023', 'Jan-2024', 'Feb-2024', 'Mar-2024', 'Apr-2024'],
-                  datasets: [{
-                    label: 'Patients',
-                    data: [1, 0, 0, 1, 0, 0, 0, 0, 3, 0, 2, 0],
-                    borderColor: '#d4a421',
-                    backgroundColor: 'rgba(212, 164, 33, 0.1)',
-                    tension: 0.1,
-                    pointBackgroundColor: '#d4a421',
-                    pointBorderColor: '#d4a421',
-                    pointRadius: 4
-                  }]
-                },
-                options: {
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: { display: false },
-                    title: { display: false }
-                  },
-                  scales: {
-                    x: { 
-                      ticks: { color: '#888888', font: { size: 11 } }, 
-                      grid: { color: '#404040' },
-                      border: { color: '#404040' }
-                    },
-                    y: { 
-                      ticks: { color: '#888888', font: { size: 11 } }, 
-                      grid: { color: '#404040' },
-                      border: { color: '#404040' }
-                    }
-                  }
-                }
-              },
-              {
-                id: 'patient-gender',
-                title: 'Patient Gender',
-                type: 'pie',
-                data: {
-                  labels: ['Male', 'Female'],
-                  datasets: [{
-                    data: [42.86, 57.14],
-                    backgroundColor: ['#9c4dcc', '#f8bbd9'],
-                    borderWidth: 0
-                  }]
-                },
-                options: {
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: { 
-                      display: true,
-                      position: 'right',
-                      labels: { 
-                        color: '#ffffff',
-                        font: { size: 12 },
-                        usePointStyle: true
-                      }
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          {
-            id: 'lead-contacts',
-            name: 'Lead Contacts Dashboard',
-            description: 'Lead generation and contact management',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            charts: []
-          },
-          {
-            id: 'fiber-tracts',
-            name: 'Fiber Tracts Dashboard',
-            description: 'Network fiber and tract analysis',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            charts: []
-          }
-        ];
-
-        return of(DashboardActions.loadDashboardsSuccess({ dashboards: defaultDashboards }));
+        // Импорт мок-данных будет происходить из отдельного файла
+        // Здесь будет только вызов импорта
+        // Реализация будет обновлена ниже
+        return import('../../mocks/mock-dashboards').then(module => {
+          const dashboards = module.MOCK_DASHBOARDS;
+          return DashboardActions.loadDashboardsSuccess({ dashboards });
+        });
       }),
       catchError(error => of(DashboardActions.loadDashboardsFailure({ error: error.message })))
     )
@@ -118,12 +29,10 @@ export class DashboardEffects {
       ofType(DashboardActions.createDashboard),
       map(({ name, description }) => {
         const newDashboard: Dashboard = {
-          id: `dashboard_${Date.now()}`,
+          id: Date.now(),
           name: name.trim(),
           description: description.trim(),
-          charts: [],
-          createdAt: new Date(),
-          updatedAt: new Date()
+          charts: []        
         };
         return DashboardActions.createDashboardSuccess({ dashboard: newDashboard });
       })
@@ -136,9 +45,22 @@ export class DashboardEffects {
       map(({ dashboardId, chart }) => {
         const newChart: Chart = {
           ...chart,
-          id: `chart_${Date.now()}`
+          id: Date.now()
         };
-        return DashboardActions.addChartSuccess({ dashboardId, chart: newChart });
+        return DashboardActions.addChartSuccess({ dashboardId: Number(dashboardId), chart: newChart });
+      })
+    )
+  );
+
+  updateChart$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardActions.updateChart),
+      map(({ dashboardId, chartId, updates }) => {
+        const updatedChart: Chart = {
+          id: Number(chartId),
+          ...updates
+        } as Chart;
+        return DashboardActions.updateChartSuccess({ dashboardId: Number(dashboardId), chart: updatedChart });
       })
     )
   );
@@ -147,10 +69,8 @@ export class DashboardEffects {
     this.actions$.pipe(
       ofType(DashboardActions.duplicateChart),
       map(({ dashboardId, chartId }) => {
-        // In a real app, you'd get the chart from the store or service
-        // For now, create a placeholder duplicate
         const duplicatedChart: Chart = {
-          id: `chart_${Date.now()}`,
+          id: Date.now(),
           title: 'Duplicated Chart',
           type: 'bar',
           data: {
@@ -165,7 +85,7 @@ export class DashboardEffects {
             maintainAspectRatio: false
           }
         };
-        return DashboardActions.duplicateChartSuccess({ dashboardId, chart: duplicatedChart });
+        return DashboardActions.duplicateChartSuccess({ dashboardId: Number(dashboardId), chart: duplicatedChart });
       })
     )
   );
