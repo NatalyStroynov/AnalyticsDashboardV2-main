@@ -57,7 +57,7 @@
   <div class="main-content" [class.filters-open]="showFiltersPanel">
     <!-- Charts Grid -->
     <div class="charts-container">
-      <div class="charts-grid" *ngIf="currentDashboard && currentDashboard.charts.length > 0; else emptyState">
+        <div class="charts-grid" *ngIf="(currentDashboard$ | async) as currentDashboard; else emptyState">
         <div *ngFor="let chart of currentDashboard.charts" class="chart-widget">
           <div class="widget-header">
             <h3 class="widget-title">{{ chart.title }}</h3>
@@ -202,6 +202,24 @@
           placeholder="Enter chart title">
       </div>
       <div class="form-group">
+        <label for="editChartTitle">Y‐axis </label>
+        <input 
+          type="text" 
+          id="editChartY"
+          [(ngModel)]="editingChart.yName" 
+          class="form-input" 
+          placeholder="Enter chart Y‐axis ">
+      </div>
+      <div class="form-group">
+        <label for="editChartTitle">X‐axis </label>
+        <input 
+          type="text" 
+          id="editChartX"
+          [(ngModel)]="editingChart.xName" 
+          class="form-input" 
+          placeholder="Enter chart X‐axis">
+      </div>
+      <div class="form-group">
         <label>Chart Type</label>
         <div class="chart-type-selector">
           <div class="chart-type-option" 
@@ -256,6 +274,24 @@
           [(ngModel)]="newChartTitle" 
           class="form-input" 
           placeholder="Enter chart title">
+      </div>
+      <div class="form-group">
+        <label for="editChartTitle">Y‐axis </label>
+        <input 
+          type="text" 
+          id="editChartY"
+          [(ngModel)]="editingChart.yName" 
+          class="form-input" 
+          placeholder="Enter chart Y‐axis ">
+      </div>
+      <div class="form-group">
+        <label for="editChartTitle">X‐axis </label>
+        <input 
+          type="text" 
+          id="editChartX"
+          [(ngModel)]="editingChart.xName" 
+          class="form-input" 
+          placeholder="Enter chart X‐axis">
       </div>
       <div class="form-group">
         <label>Chart Type</label>

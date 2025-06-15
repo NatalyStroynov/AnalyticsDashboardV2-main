@@ -2,6 +2,8 @@ export interface Chart {
   id: number;
   title: string;
   type: 'bar' | 'line' | 'pie' | 'doughnut';
+  xName:string;
+  yName:string;
   data: any;
   options: any;
 }
@@ -12,6 +14,8 @@ export interface Dashboard {
   description: string;
   charts: Chart[];
 }
+
+
 
 export interface FilterClause {
   field: string;

@@ -126,5 +126,19 @@ export const dashboardReducer = createReducer(
   on(DashboardActions.removeFilter, (state, { index }) => ({
     ...state,
     activeFilters: state.activeFilters.filter((_, i) => i !== index)
+  })),
+   // Apply Filters Success/Failure
+  on(DashboardActions.applyFiltersSuccess, (state, { dashboard, filters }) => ({
+    ...state,
+    dashboards: state.dashboards.map(d =>
+      d.id === dashboard.id ? { ...dashboard } : d
+    ),
+    activeFilters: filters,
+    error: null
+  })),
+
+  on(DashboardActions.applyFiltersFailure, (state, { error }) => ({
+    ...state,
+    error
   }))
 );

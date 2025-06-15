@@ -81,7 +81,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.activeFilters$
       .pipe(takeUntil(this.destroy$))
       .subscribe(filters => {
-        this.activeFilters = filters;
+         this.activeFilters = filters.map(f => ({ ...f }));
       });
   }
 
@@ -148,36 +148,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log('Canvas element:', canvas.tagName, canvas.id);
     console.log('Canvas context available:', !!ctx);
     console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
-
-    const defaultOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: {
-            color: '#ffffff'
-          }
-        }
-      },
-      scales: chart.type !== 'pie' && chart.type !== 'doughnut' ? {
-        x: {
-          ticks: {
-            color: '#ffffff'
-          },
-          grid: {
-            color: '#4a4a4a'
-          }
-        },
-        y: {
-          ticks: {
-            color: '#ffffff'
-          },
-          grid: {
-            color: '#4a4a4a'
-          }
-        }
-      } : {}
-    };
+ 
 
     // Merge options properly, avoiding conflicts
     const finalOptions = chart.type === 'pie' || chart.type === 'doughnut' 
@@ -204,22 +175,55 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           scales: {
             x: {
-              ticks: {
-                color: '#ffffff'
-              },
-              grid: {
-                color: '#4a4a4a'
-              }
+                title: {
+                    display: true,
+                    text: chart.xName || 'Months', // Default to 'Months' since your data shows months
+                    color: '#ffffff',
+                    font: {
+                        size: 12,
+                        weight: 'bold'
+                    },
+                    padding: { top: 10 }
+                },
+                ticks: {
+                    color: '#888888',
+                    font: {
+                        size: 11
+                    }
+                },
+                grid: {
+                    color: '#404040'
+                },
+                border: {
+                    color: '#404040'
+                }
             },
             y: {
-              ticks: {
-                color: '#ffffff'
-              },
-              grid: {
-                color: '#4a4a4a'
-              }
+                title: {
+                    display: true,
+                    text: chart.yName || 'Number of Patients', // Default to patient count
+                    color: '#ffffff',
+                    font: {
+                        size: 12,
+                        weight: 'bold'
+                    },
+                    padding: { bottom: 10 }
+                },
+                ticks: {
+                    color: '#888888',
+                    font: {
+                        size: 11
+                    }
+                },
+                grid: {
+                    color: '#404040'
+                },
+                border: {
+                    color: '#404040'
+                }
             }
-          }
+        }
+    
         };
 
     // Re-register Chart.js components to ensure they're available
@@ -335,6 +339,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         chart: {
           title: this.newChartTitle.trim(),
           type: this.newChartType,
+          xName: "xName", // change to actuALLY DATA FROM FORM
+          yName:"yName", // change to actuALLY DATA FROM FORM
           data: chartData,
           options: chartOptions
         }
@@ -364,8 +370,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   saveChartChanges(): void {
     if (this.editingChart.title.trim() && this.currentDashboard) {
-      const chartData = this.generateSampleDataForType(this.editingChart.type);
+      const chartData = this.editingChart.data; //this.generateSampleDataForType(this.editingChart.type);
       const chartOptions = this.generateChartOptionsForType(this.editingChart.type);
+      const chartX= this.editingChart.xName;
+      const chartY= this.editingChart.yName;
+     
       
       this.store.dispatch(DashboardActions.updateChart({
         dashboardId: this.currentDashboard.id,
@@ -373,6 +382,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         updates: {
           title: this.editingChart.title.trim(),
           type: this.editingChart.type,
+          xName: chartX, // change to actuALLY DATA FROM FORM
+          yName: chartY, // change to actuALLY DATA FROM FORM
           data: chartData,
           options: chartOptions
         }
@@ -447,7 +458,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyFilters(): void {
-    console.log('Applying filters:', this.activeFilters);
+    //console.log('Applying filters:', this.activeFilters);
+    this.store.dispatch(DashboardActions.applyFilters({ filters: this.activeFilters.map(f => ({ ...f })) }));
   }
 
   private generateSampleDataForType(type: string): any {

@@ -96,4 +96,19 @@ export const removeFilter = createAction(
   props<{ index: number }>()
 );
 
-export const applyFilters = createAction('[Filter] Apply Filters');
+export const applyFilters = createAction(
+  '[Filter] Apply Filters',
+   props<{ filters: FilterClause[] }>()
+);
+export const applyFiltersSuccess = createAction(
+  '[Dashboard] Apply Filters Success',
+  props<{ 
+    dashboard: Dashboard,
+    filters: FilterClause[] 
+  }>()
+);
+
+export const applyFiltersFailure = createAction(
+  '[Dashboard] Apply Filters Failure',
+  props<{ error: string }>()
+);

@@ -10,8 +10,10 @@ export const MOCK_DASHBOARDS: Dashboard[] = [
         id: 101,
         title: 'Patient Accrual',
         type: 'line',
+        xName: 'Initial upload date',
+        yName: 'Patients',
         data: {
-          labels: ['May-2023', 'Jun-2023', 'Jul-2023', 'Aug-2023', 'Sep-2023', 'Oct-2023', 'Nov-2023', 'Dec-2023', 'Jan-2024', 'Feb-2024', 'Mar-2024', 'Apr-2024'],
+          labels: ['Male', 'Female', 'Jul-2023', 'Aug-2023', 'Sep-2023', 'Oct-2023', 'Nov-2023', 'Dec-2023', 'Jan-2024', 'Feb-2024', 'Mar-2024', 'Apr-2024'],
           datasets: [{
             label: 'Patients',
             data: [1, 0, 0, 1, 0, 0, 0, 0, 3, 0, 2, 0],
@@ -32,11 +34,31 @@ export const MOCK_DASHBOARDS: Dashboard[] = [
           },
           scales: {
             x: { 
+                title: {
+                display: true,
+                text: 'Gender', // X-axis label
+                color: '#ffffff', // White color for your dark theme
+                font: {
+                  size: 12,
+                  weight: 'bold'
+                },
+                padding: { top: 10 } // Space between axis and label
+              },
               ticks: { color: '#888888', font: { size: 11 } }, 
               grid: { color: '#404040' },
               border: { color: '#404040' }
             },
             y: { 
+              title: {
+                display: true,
+                text: 'Age', // Y-axis label
+                color: '#ffffff',
+                font: {
+                  size: 12,
+                  weight: 'bold'
+                },
+                padding: { bottom: 10 } // Space between axis and label
+              },
               ticks: { color: '#888888', font: { size: 11 } }, 
               grid: { color: '#404040' },
               border: { color: '#404040' }
@@ -48,6 +70,8 @@ export const MOCK_DASHBOARDS: Dashboard[] = [
         id: 102,
         title: 'Patient Gender',
         type: 'pie',
+        xName: 'Gender',
+        yName: 'Age',
         data: {
           labels: ['Male', 'Female'],
           datasets: [{
@@ -83,6 +107,8 @@ export const MOCK_DASHBOARDS: Dashboard[] = [
         id: 201,
         title: 'Leads by Month',
         type: 'bar',
+        xName: 'Leads',
+        yName: 'Month',
         data: {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
           datasets: [{
@@ -108,6 +134,8 @@ export const MOCK_DASHBOARDS: Dashboard[] = [
         id: 202,
         title: 'Lead Source Distribution',
         type: 'pie',
+        xName: 'Lead',
+        yName: 'Source',
         data: {
           labels: ['Web', 'Referral', 'Event', 'Other'],
           datasets: [{

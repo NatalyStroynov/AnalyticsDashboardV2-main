@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { map, mergeMap, catchError } from 'rxjs/operators';
+import { map, mergeMap, catchError, withLatestFrom, switchMap } from 'rxjs/operators';
 import * as DashboardActions from './dashboard.actions';
-import { Dashboard, Chart } from './dashboard.state';
+import { Dashboard, Chart, DashboardState, FilterClause } from './dashboard.state';
+import { Store } from '@ngrx/store';
+import { selectCurrentDashboard } from './dashboard.selectors';
 
 @Injectable()
 export class DashboardEffects {
@@ -65,30 +67,103 @@ export class DashboardEffects {
     )
   );
 
-  duplicateChart$ = createEffect(() =>
+  applyFilters$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(DashboardActions.duplicateChart),
-      map(({ dashboardId, chartId }) => {
-        const duplicatedChart: Chart = {
-          id: Date.now(),
-          title: 'Duplicated Chart',
-          type: 'bar',
-          data: {
-            labels: ['A', 'B', 'C', 'D'],
-            datasets: [{
-              data: [65, 59, 80, 81],
-              backgroundColor: '#d4a421'
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false
-          }
-        };
-        return DashboardActions.duplicateChartSuccess({ dashboardId: Number(dashboardId), chart: duplicatedChart });
-      })
+      ofType(DashboardActions.applyFilters),
+      withLatestFrom(this.store.select(selectCurrentDashboard)),
+      switchMap(([action, currentDashboard]) => {
+        if (!currentDashboard) {
+          return of(DashboardActions.applyFiltersFailure({ error: 'No dashboard selected' }));
+        }
+
+        // Clone the dashboard to avoid mutating the original
+        const filteredDashboard = JSON.parse(JSON.stringify(currentDashboard));
+        
+        // Apply filters to each chart in the dashboard
+        filteredDashboard.charts = filteredDashboard.charts.map((chart: Chart) => {
+          return {
+            ...chart,
+            data: this.filterChartData(chart.data, action.filters)
+          };
+        });
+
+        return of(DashboardActions.applyFiltersSuccess({ 
+          dashboard: filteredDashboard,
+          filters: action.filters
+        }));
+      }),
+      catchError(error => of(DashboardActions.applyFiltersFailure({ error: error.message })))
     )
   );
 
-  constructor(private actions$: Actions) {}
+ private filterChartData(chartData: any, filters: FilterClause[]): any {
+    if (!filters.length) return chartData;
+
+   const includedIndexes: number[] = [];
+  chartData.datasets[0].data.forEach((value: number, index: number) => {
+    const label = chartData.labels?.[index] || '';
+    let shouldInclude = true;
+
+    for (const filter of filters) {
+      switch (filter.field) {
+        case 'Gender':
+          if (!this.matchGender(label, filter)) shouldInclude = false;
+          break;
+        case 'Age':
+        case 'Value':
+          if (!this.compareNumbers(value, filter.operator, Number(filter.value))) shouldInclude = false;
+          break;
+      }
+      if (!shouldInclude) break;
+    }
+    if (shouldInclude) includedIndexes.push(index);
+  });
+
+  // Фильтруем labels и все datasets по найденным индексам
+  const filteredLabels = chartData.labels
+    ? includedIndexes.map(i => chartData.labels[i])
+    : undefined;
+
+  const filteredDatasets = chartData.datasets.map((dataset: any) => ({
+    ...dataset,
+    data: includedIndexes.map(i => dataset.data[i])
+  }));
+
+  return {
+    ...chartData,
+    datasets: filteredDatasets,
+    ...(filteredLabels ? { labels: filteredLabels } : {})
+  };
+}
+
+  private matchGender(label: string, filter: FilterClause): boolean {
+    const labelGender = label.toLowerCase();
+    const filterValue = filter.value.toString().toLowerCase();
+    
+    switch (filter.operator) {
+      case 'equals':
+      case 'includes':
+        return labelGender.includes(filterValue);
+      case 'less':
+      case 'greater':
+        return !labelGender.includes(filterValue);
+      default:
+        return true;
+    }
+  } 
+
+  private compareNumbers(value: number, operator: string, filterValue: number): boolean {
+    switch (operator) {
+      case '>': return value > filterValue;
+      case '<': return value < filterValue;
+      case '>=': return value >= filterValue;
+      case '<=': return value <= filterValue;
+      case '=': return value === filterValue;
+      case '!=': return value !== filterValue;
+      default: return true;
+    }
+  }
+
+
+  constructor(private actions$: Actions,private store: Store<{ dashboard: DashboardState }>) {}
 }
